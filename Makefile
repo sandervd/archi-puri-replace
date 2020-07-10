@@ -14,7 +14,7 @@ viewslist.txt: filelist.txt
 filelist.txt: html_report
 	xmllint --html --xmlout html_report/index.html 2>&- |xmllint --xpath '//*[@class="tree-element"]/a/@href' - | grep -oP 'href="\K([a-zA-Z0-9\/.-]*)(?=")' | sort | uniq > filelist.txt
 
-html_report:
+html_report: EIRA.archimate
 	Archi -application com.archimatetool.commandline.app -consoleLog -nosplash --loadModel EIRA.archimate --html.createReport html_report 2> /dev/null
 
 clean:
