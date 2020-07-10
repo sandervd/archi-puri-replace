@@ -11,14 +11,11 @@ substitutions.sh: filelist.txt generate_substitutions.sh
 viewslist.txt: filelist.txt
 	grep 'views' filelist.txt > viewslist.txt
 
-filelist.txt: setup
+filelist.txt: html_report
 	xmllint --html --xmlout html_report/index.html 2>&- |xmllint --xpath '//*[@class="tree-element"]/a/@href' - | grep -oP 'href="\K([a-zA-Z0-9\/.-]*)(?=")' | sort | uniq > filelist.txt
 
-download:
-	curl https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2019-03/22cb8062-887b-49be-afcd-23c3c4defc90/EIRA_v3_0_0_html.zip -o EIRA.zip
-setup: download
-	unzip EIRA.zip
-	mv 'EIRA v3_0_0.html' 'html_report'
+html_report:
+	Archi -application com.archimatetool.commandline.app -consoleLog -nosplash --loadModel EIRA.archimate --html.createReport html_report 2> /dev/null
 
 clean:
 	rm -rf filelist.txt viewslist.txt substitutions.sh EIRA.zip html_report
