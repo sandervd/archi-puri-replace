@@ -1,4 +1,6 @@
 # Updates the links to ABBs to their persistent URIs.
+cwd  := $(shell pwd)
+
 update_views: substitutions.sh viewslist.txt
 	xargs -n1 -P8 -a viewslist.txt ./substitutions.sh
 
@@ -15,7 +17,7 @@ filelist.txt: html_report
 	xmllint --html --xmlout html_report/index.html 2>&- |xmllint --xpath '//*[@class="tree-element"]/a/@href' - | grep -oP 'href="\K([a-zA-Z0-9\/.-]*)(?=")' | sort | uniq > filelist.txt
 
 html_report: EIRA.archimate
-	Archi -application com.archimatetool.commandline.app -consoleLog -nosplash --loadModel EIRA.archimate --html.createReport html_report 2> /dev/null
+	docker run --mount type=bind,source="$(cwd)",target=/home/archi/ fauberso/archi archi --loadModel EIRA.archimate --html.createReport html_report
 
 clean:
 	rm -rf filelist.txt viewslist.txt substitutions.sh EIRA.zip html_report
